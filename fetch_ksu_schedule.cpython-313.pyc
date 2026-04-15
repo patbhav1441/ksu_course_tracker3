@@ -1,0 +1,90 @@
+"""Fetch KSU academic programs from the Academic Maps site.
+
+This script is intentionally separated from the deployed Streamlit app.
+It should be run as an offline ETL step that refreshes JSON or parquet files.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+from pathlib import Path
+
+import requests
+from bs4 import BeautifulSoup
+
+BASE_URL = "https://academicmaps.kennesaw.edu/"
+OUTFILE = Path(__file__).resolve().parents[1] / "data" / "demo_data" / "programs_live.json"
+
+
+def fetch_program_index() -> list[dict]:
+    response = requests.get(BASE_URL, timeout=30)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, "html.parser")
+    programs: list[dict] = []
+
+    for link in soup.find_all("a", href=True):
+        href = link["href"]
+        if "program.php?templateid=" not in href:
+            continue
+        name = " ".join(link.get_text(" ", strip=True).split())
+        if not name:
+            continue
+        programs.append({"name": name, "url": requests.compat.urljoin(BASE_URL, href)})
+
+    deduped = {(p["name"], p["url"]): p for p in programs}
+    return list(deduped.values())
+
+
+def extract_program_details(program_url: str) -> dict:
+    response = requests.get(program_url, timeout=30)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, "html.parser")
+    text = soup.get_text("\n", strip=True)
+
+    title = soup.title.get_text(strip=True) if soup.title else program_url
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    requirements = []
+    course_pattern = re.compile(r"^[A-Z]{2,5}\s\d{4}[A-Z]?")
+
+    for line in lines:
+        if course_pattern.match(line):
+            parts = line.split()
+            code = f"{parts[0]} {parts[1]}"
+            requirements.append({
+                "course_code": code,
+                "title": line.replace(code, "").strip(" -"),
+                "recommended_term": "Unparsed",
+                "credits": None,
+            })
+
+    return {
+        "name": title,
+        "description": next((line for line in lines if len(line) > 120), "Description unavailable"),
+        "college": "Kennesaw State University",
+        "requirements": requirements,
+        "source_url": program_url,
+    }
+
+
+def main() -> None:
+    program_index = fetch_program_index()
+    enriched = {}
+    for program in program_index:
+        try:
+            details = extract_program_details(program["url"])
+            enriched[details["name"]] = details
+        except Exception as exc:
+            enriched[program["name"]] = {
+                "name": program["name"],
+                "description": f"Failed to parse detail page: {exc}",
+                "college": "Kennesaw State University",
+                "requirements": [],
+                "source_url": program["url"],
+            }
+    OUTFILE.write_text(json.dumps(enriched, indent=2), encoding="utf-8")
+    print(f"Saved {len(enriched)} programs to {OUTFILE}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,23 @@
+[
+  {"course_code": "MATH 1190", "title": "Calculus I", "credits": 4, "prerequisites": [], "corequisites": []},
+  {"course_code": "CS 1301", "title": "Programming Principles", "credits": 3, "prerequisites": [], "corequisites": []},
+  {"course_code": "CS 1302", "title": "Data Structures", "credits": 3, "prerequisites": ["CS 1301"], "corequisites": []},
+  {"course_code": "CSE 1321", "title": "Programming and Problem Solving I", "credits": 4, "prerequisites": [], "corequisites": []},
+  {"course_code": "CSE 1322", "title": "Programming and Problem Solving II", "credits": 4, "prerequisites": ["CSE 1321"], "corequisites": []},
+  {"course_code": "MATH 2202", "title": "Calculus II", "credits": 4, "prerequisites": ["MATH 1190"], "corequisites": []},
+  {"course_code": "CS 2302", "title": "Discrete Structures", "credits": 3, "prerequisites": ["CS 1302"], "corequisites": []},
+  {"course_code": "CS 3304", "title": "Mathematical Foundations of Computing", "credits": 3, "prerequisites": ["CS 2302"], "corequisites": []},
+  {"course_code": "CS 3502", "title": "Operating Systems", "credits": 3, "prerequisites": ["CS 3304"], "corequisites": []},
+  {"course_code": "CS 3600", "title": "Systems and Architecture", "credits": 3, "prerequisites": ["CS 2302"], "corequisites": []},
+  {"course_code": "STAT 1401", "title": "Introductory Statistics", "credits": 3, "prerequisites": [], "corequisites": []},
+  {"course_code": "DATA 1501", "title": "Introduction to Data Science", "credits": 3, "prerequisites": [], "corequisites": []},
+  {"course_code": "DATA 2201", "title": "Data Wrangling", "credits": 3, "prerequisites": ["DATA 1501"], "corequisites": []},
+  {"course_code": "DATA 3201", "title": "Applied Modeling", "credits": 3, "prerequisites": ["DATA 2201", "STAT 1401"], "corequisites": []},
+  {"course_code": "DATA 4101", "title": "Data Science Project", "credits": 3, "prerequisites": ["DATA 3201"], "corequisites": []},
+  {"course_code": "ECON 1000", "title": "Contemporary Economic Issues", "credits": 3, "prerequisites": [], "corequisites": []},
+  {"course_code": "ACCT 2101", "title": "Principles of Financial Accounting", "credits": 3, "prerequisites": [], "corequisites": []},
+  {"course_code": "MKTG 3100", "title": "Principles of Marketing", "credits": 3, "prerequisites": [], "corequisites": []},
+  {"course_code": "IS 2200", "title": "Information Systems and Communication", "credits": 3, "prerequisites": [], "corequisites": []},
+  {"course_code": "IS 3260", "title": "Business Application Development", "credits": 3, "prerequisites": ["IS 2200"], "corequisites": []},
+  {"course_code": "IS 3700", "title": "Business Intelligence", "credits": 3, "prerequisites": ["IS 2200"], "corequisites": []}
+]
